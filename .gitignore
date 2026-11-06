@@ -1,0 +1,40 @@
+# 依赖
+node_modules/
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+
+# 产物
+dist/
+build/
+out/
+*.log
+
+# 密钥与本地配置
+.env
+.env.*
+*.pem
+*.key
+secrets.*
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+
+# 大文件（按需保留）
+*.zip
+*.tar.gz
+
+# 模型权重（体积大，一律不入库）
+*.safetensors
+*.ckpt
+*.gguf
+*.onnx
+*.pt
+*.pth
+# *.bin    # PyTorch 旧版权重；若项目里有正常 .bin 数据文件请注释掉本行

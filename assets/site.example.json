@@ -1,0 +1,82 @@
+{
+  "_说明": "复制为 site.json 后填写。所有字段都可缺省，缺省会渲染成空串；repo_url 是唯一建议必填项。",
+  "project": "MyProject",
+  "tagline": "一句话说清它解决什么问题",
+  "chip": "2026 · v0.1.0",
+  "title_main": "把某件事",
+  "title_sub": "变得足够简单",
+  "lead": "两句以内的定位说明：给谁用、解决什么、有什么不同。",
+  "desc": "SEO 描述，一句到两句，出现在搜索结果和社交分享卡片里。",
+  "repo_url": "https://github.com/OWNER/REPO",
+  "site_url": "",
+  "owner": "OWNER",
+  "repo_name": "REPO",
+  "site_host": "example.com",
+  "license": "MIT",
+  "term_title": "bash — myproject",
+  "term_lines": [
+    { "cls": "c", "text": "$ myproject run --demo" },
+    { "cls": "m", "text": "loading... done in 1.2s" },
+    { "cls": "p", "text": "output line one" },
+    { "cls": "", "text": "output line two" },
+    { "cls": "m", "text": "[ 12 results in 0.8s ]" }
+  ],
+  "stats": [
+    { "value": "0", "unit": "依赖", "label": "装完即用" },
+    { "value": "1", "unit": "命令", "label": "启动方式" },
+    { "value": "3", "unit": "平台", "label": "Win / macOS / Linux" },
+    { "value": "MIT", "unit": "", "label": "开源许可" }
+  ],
+  "features_title": "它做了什么",
+  "features_desc": "一句话概括这套东西的设计取舍。",
+  "features": [
+    { "icon": "◍", "title": "特性一", "desc": "解决什么问题，用一句话说清。", "desc_plain": "解决什么问题，用一句话说清。" },
+    { "icon": "⌘", "title": "特性二", "desc": "解决什么问题，用一句话说清。", "desc_plain": "解决什么问题，用一句话说清。" },
+    { "icon": "↻", "title": "特性三", "desc": "解决什么问题，用一句话说清。", "desc_plain": "解决什么问题，用一句话说清。" }
+  ],
+  "start_title": "三步跑起来",
+  "start_desc": "从零到能用需要几步。",
+  "steps": [
+    {
+      "n": "1",
+      "title": "准备环境",
+      "code": "git clone https://github.com/OWNER/REPO.git\ncd REPO\nnpm install   # 或 pip install -r requirements.txt",
+      "code_plain": "git clone https://github.com/OWNER/REPO.git\ncd REPO\nnpm install",
+      "note": "需要 Node 18+ / Python 3.10+。"
+    },
+    {
+      "n": "2",
+      "title": "配置",
+      "code": "cp .env.example .env",
+      "code_plain": "cp .env.example .env",
+      "note": "填入必要参数，不要提交 .env。"
+    },
+    {
+      "n": "3",
+      "title": "启动",
+      "code": "npm run dev   # → http://127.0.0.1:3000",
+      "code_plain": "npm run dev",
+      "note": "首次启动会慢一些。"
+    }
+  ],
+  "usage": "命令行、图形界面、API 三种用法各写一小段，配上最小示例。",
+  "spec_title": "它是什么",
+  "spec_desc": "把关键规格列清楚，别人不用翻代码就能判断适不适合自己。",
+  "specs": [
+    { "k": "运行时", "v": "Node 18+ / Python 3.10+" },
+    { "k": "依赖", "v": "0 个第三方运行时依赖" },
+    { "k": "体积", "v": "12 KB（gzip）" },
+    { "k": "许可", "v": "MIT" }
+  ],
+  "limits_title": "先说清楚它做不到什么",
+  "limits_desc": "把边界写在前面，比事后解释便宜。",
+  "limits": [
+    { "title": "不做 X", "desc": "为什么不做，替代方案是什么。" },
+    { "title": "不支持 Y", "desc": "为什么不做，替代方案是什么。" }
+  ],
+  "final_title": "想看代码？",
+  "final_desc": "仓库包含全部源码与文档，欢迎 issue 和 PR。",
+  "footer_note": "Built with 耐心与克制。",
+  "intro": "三段以内讲清背景：为什么做这个、解决谁的什么问题、和同类方案的区别。",
+  "tree": "├── src/            # 源码\n├── docs/           # 文档\n├── index.html      # 介绍页\n└── README.md"
+}

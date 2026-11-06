@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{PROJECT}} · {{TAGLINE}}</title>
+<meta name="description" content="{{DESC}}">
+{{#IF_SITE_URL}}<link rel="canonical" href="{{SITE_URL}}">{{/IF_SITE_URL}}
+<meta property="og:type" content="website">
+{{#IF_SITE_URL}}<meta property="og:url" content="{{SITE_URL}}">{{/IF_SITE_URL}}
+<meta property="og:title" content="{{PROJECT}} · {{TAGLINE}}">
+<meta property="og:description" content="{{DESC}}">
+<meta name="theme-color" content="#0a0c10">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#9889;</text></svg>">
+<style>
+  :root{
+    --bg:#0a0c10; --bg2:#0d1017; --surface:#11151d; --surface2:#151a24;
+    --line:#1e2531; --line2:#2a3341;
+    --ink:#e9edf4; --sub:#8d98ad; --dim:#5d6779;
+    --accent:#5fd3c4; --accent2:#7f8cf9; --warn:#f0b45f;
+    --mono:"JetBrains Mono","SF Mono",Consolas,"Cascadia Code",monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(900px 500px at 15% -10%,rgba(95,211,196,.12),transparent 60%),
+               radial-gradient(800px 500px at 85% 0%,rgba(127,140,249,.10),transparent 60%)}
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.35;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:64px 64px;
+    mask-image:radial-gradient(circle at 50% 0%,#000 0%,transparent 65%);
+    -webkit-mask-image:radial-gradient(circle at 50% 0%,#000 0%,transparent 65%)}
+  .wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:0 24px}
+
+  nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:rgba(10,12,16,.72);border-bottom:1px solid var(--line)}
+  nav .inner{max-width:1080px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:16px}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:15px;letter-spacing:-.01em}
+  .logo .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 14px var(--accent)}
+  nav .links{margin-left:auto;display:flex;align-items:center;gap:22px}
+  nav a.txt{color:var(--sub);text-decoration:none;font-size:14px;transition:.18s}
+  nav a.txt:hover{color:var(--ink)}
+  .gh-btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;background:var(--surface2);
+    border:1px solid var(--line2);color:var(--ink);padding:7px 14px;border-radius:9px;font-size:13.5px;font-weight:600;transition:.18s}
+  .gh-btn:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+  .gh-btn svg{width:16px;height:16px;fill:currentColor}
+  @media(max-width:720px){nav .links a.txt{display:none}}
+
+  header.hero{padding:84px 0 64px}
+  .chip{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--accent);
+    background:rgba(95,211,196,.08);border:1px solid rgba(95,211,196,.25);padding:5px 12px;border-radius:999px}
+  .chip .pulse{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.8)}}
+  h1{font-size:clamp(34px,5.4vw,58px);line-height:1.12;letter-spacing:-.03em;margin:22px 0 18px;font-weight:800}
+  h1 .grad{background:linear-gradient(100deg,var(--accent),var(--accent2) 70%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lead{color:var(--sub);font-size:17.5px;max-width:660px;margin:0 0 32px}
+  .cta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .btn{display:inline-flex;align-items:center;gap:9px;text-decoration:none;font-weight:650;font-size:15px;padding:12px 22px;border-radius:11px;transition:.18s}
+  .btn.primary{background:linear-gradient(180deg,#6ee0d0,#4bc4b5);color:#05201d;box-shadow:0 8px 26px -10px rgba(95,211,196,.65)}
+  .btn.primary:hover{transform:translateY(-2px);box-shadow:0 14px 34px -12px rgba(95,211,196,.75)}
+  .btn.ghost{border:1px solid var(--line2);color:var(--ink);background:var(--surface)}
+  .btn.ghost:hover{border-color:var(--accent);color:var(--accent)}
+  .btn svg{width:17px;height:17px;fill:currentColor}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin-top:52px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--line)}
+  .stat{background:var(--surface);padding:18px 20px}
+  .stat .k{font-family:var(--mono);font-size:24px;font-weight:700;letter-spacing:-.02em}
+  .stat .k em{color:var(--accent);font-style:normal}
+  .stat .v{color:var(--dim);font-size:12.5px;margin-top:3px}
+  @media(max-width:720px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+  .terminal{margin:44px 0 0;background:linear-gradient(180deg,var(--surface2),var(--surface));border:1px solid var(--line2);border-radius:14px;overflow:hidden;box-shadow:0 30px 60px -30px #000}
+  .term-bar{display:flex;align-items:center;gap:7px;padding:11px 14px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02)}
+  .term-bar i{width:11px;height:11px;border-radius:50%;display:block}
+  .term-bar i:nth-child(1){background:#f2635f}.term-bar i:nth-child(2){background:#f0b44c}.term-bar i:nth-child(3){background:#5fc46a}
+  .term-bar .t{margin-left:8px;font-family:var(--mono);font-size:12px;color:var(--dim)}
+  .term-body{padding:18px 20px;font-family:var(--mono);font-size:13.2px;line-height:1.85;white-space:pre-wrap;word-break:break-word;color:var(--ink)}
+  .term-body .c{color:var(--accent)}
+  .term-body .m{color:var(--dim)}
+  .term-body .p{color:var(--accent2)}
+
+  section{padding:78px 0}
+  .sec-head{margin-bottom:38px}
+  .sec-head .num{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.08em}
+  h2{font-size:clamp(24px,3.4vw,32px);letter-spacing:-.02em;margin:10px 0 8px;font-weight:750}
+  .sec-head p{color:var(--sub);margin:0;font-size:15.5px;max-width:620px}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:860px){.grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:600px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;transition:.2s;position:relative;overflow:hidden}
+  .card:hover{border-color:var(--line2);transform:translateY(-3px);background:var(--surface2)}
+  .card .ico{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;margin-bottom:14px;background:rgba(95,211,196,.1);border:1px solid rgba(95,211,196,.22);font-size:17px}
+  .card h3{margin:0 0 7px;font-size:15.5px;letter-spacing:-.01em}
+  .card p{margin:0;color:var(--sub);font-size:14px;line-height:1.65}
+
+  .steps{display:flex;flex-direction:column;gap:20px}
+  .step{display:grid;grid-template-columns:44px 1fr;gap:18px;align-items:start}
+  .step .n{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent);background:rgba(95,211,196,.09);border:1px solid rgba(95,211,196,.22)}
+  .step h4{margin:2px 0 10px;font-size:15.5px}
+  .step .note{color:var(--dim);font-size:13.5px;margin:8px 0 0}
+  .code{position:relative;background:var(--bg2);border:1px solid var(--line);border-radius:11px;padding:14px 16px;font-family:var(--mono);font-size:13.2px;line-height:1.8;overflow-x:auto;color:#c7d0de;white-space:pre-wrap;word-break:break-word}
+  .copy{position:absolute;top:9px;right:9px;background:var(--surface2);border:1px solid var(--line2);color:var(--sub);font-size:11.5px;font-family:var(--mono);padding:4px 9px;border-radius:7px;cursor:pointer;transition:.16s;opacity:0}
+  .code:hover .copy{opacity:1}
+  .copy:hover,.copy.done{color:var(--accent);border-color:var(--accent)}
+
+  .spec{width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .spec th,.spec td{padding:12px 16px;text-align:left;font-size:14.2px;border-bottom:1px solid var(--line)}
+  .spec tr:last-child td{border-bottom:0}
+  .spec th{color:var(--dim);font-weight:600;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;background:var(--surface)}
+  .spec td:first-child{color:var(--sub);width:38%}
+  .spec td:last-child{font-family:var(--mono);font-size:13.4px}
+  .spec tbody tr{background:var(--bg2)}
+  .spec tbody tr:hover{background:var(--surface)}
+
+  .limits{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:760px){.limits{grid-template-columns:1fr}}
+  .limit{display:flex;gap:12px;padding:16px 18px;background:rgba(240,180,95,.05);border:1px solid rgba(240,180,95,.18);border-radius:12px}
+  .limit .b{color:var(--warn);font-size:15px;line-height:1.3}
+  .limit p{margin:0;font-size:14px;color:var(--sub)}
+  .limit p b{color:var(--ink);font-weight:600}
+
+  .final{margin:0 0 80px;padding:48px 40px;border-radius:18px;text-align:center;background:linear-gradient(160deg,rgba(95,211,196,.09),rgba(127,140,249,.07));border:1px solid var(--line2)}
+  .final h2{margin:0 0 10px}
+  .final p{color:var(--sub);margin:0 0 26px;font-size:15.5px}
+
+  footer{border-top:1px solid var(--line);padding:28px 0 44px}
+  footer .inner{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;color:var(--dim);font-size:13px}
+  footer a{color:var(--sub);text-decoration:none}
+  footer a:hover{color:var(--accent)}
+  .mono{font-family:var(--mono)}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+  .reveal.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="inner">
+    <div class="logo"><span class="dot"></span>{{PROJECT}}</div>
+    <div class="links">
+      <a class="txt" href="#features">特性</a>
+      <a class="txt" href="#start">快速开始</a>
+      <a class="txt" href="#spec">规格</a>
+      <a class="txt" href="#limits">限制</a>
+      <a class="gh-btn" href="{{REPO_URL}}" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="hero">
+    <span class="chip"><span class="pulse"></span>{{CHIP}}</span>
+    <h1>{{TITLE_MAIN}}<br><span class="grad">{{TITLE_SUB}}</span></h1>
+    <p class="lead">{{LEAD}}</p>
+    <div class="cta">
+      <a class="btn primary" href="{{REPO_URL}}" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        在 GitHub 上查看
+      </a>
+      {{#IF_SITE_URL}}<a class="btn ghost" href="{{SITE_URL}}" target="_blank" rel="noopener">在线体验 →</a>{{/IF_SITE_URL}}
+      <a class="btn ghost" href="#start">快速开始 →</a>
+    </div>
+
+    <div class="stats">
+      {{#STATS}}<div class="stat"><div class="k">{{VALUE}}<em>{{UNIT}}</em></div><div class="v">{{LABEL}}</div></div>{{/STATS}}
+    </div>
+
+    <div class="terminal">
+      <div class="term-bar"><i></i><i></i><i></i><span class="t">{{TERM_TITLE}}</span></div>
+      <div class="term-body">{{#TERM_LINES}}<span class="{{CLS}}">{{TEXT}}</span>{{/TERM_LINES}}</div>
+    </div>
+  </header>
+
+  <section id="features">
+    <div class="sec-head reveal">
+      <div class="num">01 / FEATURES</div>
+      <h2>{{FEATURES_TITLE}}</h2>
+      <p>{{FEATURES_DESC}}</p>
+    </div>
+    <div class="grid">
+      {{#FEATURES}}<div class="card reveal"><div class="ico">{{ICON}}</div><h3>{{TITLE}}</h3><p>{{DESC}}</p></div>{{/FEATURES}}
+    </div>
+  </section>
+
+  <section id="start">
+    <div class="sec-head reveal">
+      <div class="num">02 / QUICKSTART</div>
+      <h2>{{START_TITLE}}</h2>
+      <p>{{START_DESC}}</p>
+    </div>
+    <div class="steps">
+      {{#STEPS}}<div class="step reveal">
+        <div class="n">{{N}}</div>
+        <div>
+          <h4>{{TITLE}}</h4>
+          <div class="code"><button class="copy">copy</button>{{CODE}}</div>
+          <p class="note">{{NOTE}}</p>
+        </div>
+      </div>{{/STEPS}}
+    </div>
+  </section>
+
+  <section id="spec">
+    <div class="sec-head reveal">
+      <div class="num">03 / SPEC</div>
+      <h2>{{SPEC_TITLE}}</h2>
+      <p>{{SPEC_DESC}}</p>
+    </div>
+    <table class="spec reveal">
+      <thead><tr><th>项目</th><th>规格</th></tr></thead>
+      <tbody>{{#SPECS}}<tr><td>{{K}}</td><td>{{V}}</td></tr>{{/SPECS}}</tbody>
+    </table>
+  </section>
+
+  <section id="limits">
+    <div class="sec-head reveal">
+      <div class="num">04 / LIMITS</div>
+      <h2>{{LIMITS_TITLE}}</h2>
+      <p>{{LIMITS_DESC}}</p>
+    </div>
+    <div class="limits">
+      {{#LIMITS}}<div class="limit reveal"><div class="b">✕</div><p><b>{{TITLE}}</b><br>{{DESC}}</p></div>{{/LIMITS}}
+    </div>
+  </section>
+
+  <div class="final reveal">
+    <h2>{{FINAL_TITLE}}</h2>
+    <p>{{FINAL_DESC}}</p>
+    <a class="btn primary" href="{{REPO_URL}}" target="_blank" rel="noopener">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      打开 GitHub 仓库
+    </a>
+  </div>
+
+  <footer>
+    <div class="inner">
+      <span>{{FOOTER_NOTE}}</span>
+      <span><a href="{{REPO_URL}}" target="_blank" rel="noopener">GitHub</a> · <a href="{{REPO_URL}}/issues" target="_blank" rel="noopener">Issues</a>{{#IF_SITE_URL}} · <a href="{{SITE_URL}}" target="_blank" rel="noopener">官网</a>{{/IF_SITE_URL}}</span>
+    </div>
+  </footer>
+</div>
+
+<script>
+  document.querySelectorAll('.copy').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var box = btn.parentElement.cloneNode(true);
+      var b = box.querySelector('.copy'); if (b) b.remove();
+      var text = box.innerText.replace(/\s+$/, '');
+      var done = function(){
+        btn.textContent = 'copied'; btn.classList.add('done');
+        setTimeout(function(){ btn.textContent = 'copy'; btn.classList.remove('done'); }, 1400);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, done);
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta); done();
+      }
+    });
+  });
+
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(function(el, i){
+    el.style.transitionDelay = (Math.min(i % 6, 5) * 45) + 'ms';
+    io.observe(el);
+  });
+</script>
+</body>
+</html>

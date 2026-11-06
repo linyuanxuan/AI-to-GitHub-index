@@ -1,0 +1,100 @@
+{
+  "project": "github-showcase-publish",
+  "tagline": "把本地项目变成带介绍页的 GitHub 仓库",
+  "chip": "2026 · WorkBuddy Skill",
+  "title_main": "README 与介绍页",
+  "title_sub": "从项目里长出来",
+  "lead": "读你的代码，生成 README.md 与单文件 index.html，再完成 init / commit / push。用户名、邮箱、仓库地址、代理全部当场探测，一个都不写死在代码里。",
+  "desc": "WorkBuddy Skill：为本地项目生成 README 与单文件介绍页，并自动完成 git 初始化、提交与推送。纯标准库，零第三方依赖。",
+  "repo_url": "https://github.com/linyuanxuan/AI-to-GitHub-index",
+  "site_url": "",
+  "license": "MIT",
+
+  "term_title": "bash — publish.py",
+  "term_lines": [
+    { "cls": "c", "text": "$ python scripts/render.py --template assets/landing.template.html --config site.json --out index.html" },
+    { "cls": "m", "text": "[ok] index.html  18842 bytes" },
+    { "cls": "",  "text": "" },
+    { "cls": "c", "text": "$ python scripts/publish.py --dir . --remote-url https://github.com/<owner>/<repo>.git" },
+    { "cls": "m", "text": "[1/6] git: git version 2.55.0.windows.3" },
+    { "cls": "m", "text": "[2/6] 提交身份: 取自本机 git config  (来源: global)" },
+    { "cls": "m", "text": "[3/6] 已初始化仓库（分支 main）" },
+    { "cls": "m", "text": "[4/6] 已提交: feat: README + 介绍页" },
+    { "cls": "m", "text": "[5/6] 已添加远端 origin" },
+    { "cls": "p", "text": "[6/6] 推送成功: main -> main" }
+  ],
+
+  "stats": [
+    { "value": "0", "unit": "依赖", "label": "只用标准库" },
+    { "value": "3", "unit": "脚本", "label": "探测 / 渲染 / 发布" },
+    { "value": "10", "unit": "文件", "label": "整包 85 KB" },
+    { "value": "MIT", "unit": "", "label": "开源许可" }
+  ],
+
+  "features_title": "它替你做的三件事",
+  "features_desc": "先搞清楚机器和环境，再产出内容，最后才动手推。顺序不能反。",
+  "features": [
+    { "icon": "◍", "title": "先探测，再动手", "desc": "git 装在哪、提交身份是谁、远端指向哪里、要不要走代理，一次问清楚，缺失就报错而不是瞎猜。", "desc_plain": "git 装在哪、提交身份是谁、远端指向哪里、要不要走代理，一次问清楚。" },
+    { "icon": "⌘", "title": "零硬编码个人信息", "desc": "代码里没有用户名、邮箱和仓库地址，全部来自 git config 或当场传参。换台机器照样跑。", "desc_plain": "代码里没有用户名、邮箱和仓库地址，全部来自 git config 或当场传参。" },
+    { "icon": "◈", "title": "模板 + JSON 渲染", "desc": "一个极简模板引擎，支持变量、列表块和条件块，改版式不用碰 Python。", "desc_plain": "极简模板引擎，支持变量、列表块和条件块，改版式不用碰 Python。" },
+    { "icon": "↻", "title": "认证不卡死", "desc": "强制关闭终端密码提示，认证失败立刻返回退出码 4 并给出三条可执行方案，不会挂在登录界面上。", "desc_plain": "关闭终端密码提示，认证失败立刻返回退出码与三条可执行方案。" },
+    { "icon": "⇄", "title": "代理自动回退", "desc": "直连 github.com 失败时，扫描常见本地代理端口并逐个验证，验证通过才用于推送。", "desc_plain": "直连失败时扫描常见本地代理端口，逐个验证后再用于推送。" },
+    { "icon": "◇", "title": "dry-run 先演练", "desc": "加 --dry-run 只打印将要执行的动作：不改文件、不建仓库、不提交、不推送。", "desc_plain": "加 --dry-run 只打印将执行的动作，不改文件、不建仓库、不推送。" }
+  ],
+
+  "start_title": "三步跑起来",
+  "start_desc": "把它当作一个可执行的流程，不是一个要背下来的规范。",
+  "steps": [
+    {
+      "n": "1",
+      "title": "放进 skills 目录",
+      "code": "git clone https://github.com/linyuanxuan/AI-to-GitHub-index.git \\\n  ~/.workbuddy/skills/github-showcase-publish",
+      "code_plain": "git clone https://github.com/linyuanxuan/AI-to-GitHub-index.git ~/.workbuddy/skills/github-showcase-publish",
+      "note": "装成用户级 skill，所有项目都能调用；也可放项目内的 .workbuddy/skills/。"
+    },
+    {
+      "n": "2",
+      "title": "填配置并渲染",
+      "code": "cp assets/site.example.json site.json\n# 只改 repo_url 就够，owner 和域名会自动推导\npython scripts/render.py --template assets/readme.template.md \\\n  --config site.json --out README.md --no-escape\npython scripts/render.py --template assets/landing.template.html \\\n  --config site.json --out index.html",
+      "code_plain": "cp assets/site.example.json site.json\npython scripts/render.py --template assets/readme.template.md --config site.json --out README.md --no-escape\npython scripts/render.py --template assets/landing.template.html --config site.json --out index.html",
+      "note": "脚本会列出没赋值的变量名，补齐后重跑即可。"
+    },
+    {
+      "n": "3",
+      "title": "提交并推送",
+      "code": "python scripts/publish.py --dir . \\\n  --remote-url https://github.com/<owner>/<repo>.git \\\n  --message \"feat: README + 介绍页\"",
+      "code_plain": "python scripts/publish.py --dir . --remote-url https://github.com/<owner>/<repo>.git --message \"feat: README + 介绍页\"",
+      "note": "先加 --dry-run 演练一遍更稳。身份缺省时读本机 git config。"
+    }
+  ],
+
+  "usage": "三个脚本各自独立，也能单独用：`detect_git.py` 输出 JSON 供别的程序消费，`render.py` 只管模板渲染，`publish.py` 只管提交推送。串起来是一条流水线，拆开是三把小刀。",
+
+  "intro": "开源项目最难的不是写代码，是写那份没人愿意写的 README。这个 skill 把「读代码 → 写文档 → 做介绍页 → 推上去」串成一条可执行流程。\n\n它不渲染模型生成的空话：特性、命令、规格都来自实际读到的文件。介绍页是单文件 HTML，纯静态，GitHub Pages 与 Cloudflare Pages 都能直接托管。\n\n与「让 AI 直接写个 README」的区别在于可复现——同样的配置跑两次，产出一模一样；版式不满意改模板，不用重新生成。",
+
+  "spec_title": "它是什么",
+  "spec_desc": "判断适不适合你的几个关键点。",
+  "specs": [
+    { "k": "运行时", "v": "Python 3.8+（纯标准库）" },
+    { "k": "第三方依赖", "v": "0" },
+    { "k": "整包体积", "v": "约 85 KB" },
+    { "k": "模板语法", "v": "双花括号：变量 / 列表块 / 条件块" },
+    { "k": "退出码", "v": "0 成功 / 2 环境 / 3 身份 / 4 认证 / 5 网络 / 6 被拒" },
+    { "k": "许可", "v": "MIT" }
+  ],
+
+  "limits_title": "先说清楚它做不到什么",
+  "limits_desc": "边界写在这里，省得你试完才发现。",
+  "limits": [
+    { "title": "不替你建远端仓库", "desc": "创建 GitHub 仓库要走 API，需要你的 token。它只负责往已存在的仓库推。" },
+    { "title": "不替你登录", "desc": "认证交给系统 git（Credential Manager / SSH key）。凭据不进任何文件，也不经过脚本。" },
+    { "title": "介绍页是静态的", "desc": "只有 HTML/CSS/JS，没有后端。项目本身的功能得在本地跑。" },
+    { "title": "内容要人来审", "desc": "特性、规格、限制这些事实来自读代码，但措辞和取舍仍需要你过一眼，它不会替你吹。" }
+  ],
+
+  "tree": "├── SKILL.md               # 流程、铁律、常见坑\n├── scripts/\n│   ├── detect_git.py      # 环境探测 → JSON\n│   ├── render.py          # 模板 + JSON → 文件\n│   └── publish.py         # init / commit / remote / push\n├── assets/\n│   ├── landing.template.html\n│   ├── readme.template.md\n│   ├── site.example.json\n│   └── _headers.example\n└── references/\n    ├── config-schema.md\n    └── troubleshooting.md",
+
+  "final_title": "想看它是怎么写的？",
+  "final_desc": "全部源码、模板和故障排查手册都在仓库里，欢迎 issue 和 PR。",
+  "footer_note": "在 2 核 Windows 机器上边跑边修出来的。"
+}
