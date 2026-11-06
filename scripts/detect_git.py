@@ -167,6 +167,26 @@ def tcp_open(host: str, port: int, timeout: float = 1.5) -> bool:
         return False
 
 
+def https_direct_ok(target: str = "https://github.com/", timeout: float = 8.0) -> bool:
+    """真跑一次 HTTPS 请求判断直连是否可用。
+
+    只测 TCP 443 会误判：存在「端口能连、TLS 握手被重置」的网络（SNI 阻断典型症状），
+    表现为 tcp_open 成功但 git push 报 unexpected eof。
+    """
+    import urllib.error
+    import urllib.request
+
+    opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+    req = urllib.request.Request(target, method="HEAD", headers={"User-Agent": "git-detect"})
+    try:
+        with opener.open(req, timeout=timeout) as resp:
+            return resp.status < 500
+    except urllib.error.HTTPError as exc:
+        return exc.code < 500  # 4xx 说明 TLS 与 HTTP 链路都通
+    except Exception:  # noqa: BLE001
+        return False
+
+
 def http_via_proxy(proxy: str, target: str = "https://api.github.com/", timeout: float = 6.0) -> int | None:
     """经代理发一次 HTTPS 请求，返回状态码；失败返回 None。仅用于验证代理可用。"""
     import urllib.error
@@ -187,7 +207,8 @@ def http_via_proxy(proxy: str, target: str = "https://api.github.com/", timeout:
 
 def detect_network() -> dict:
     info = {
-        "direct_github": tcp_open("github.com", 443, 3.0),
+        "direct_github": https_direct_ok(),
+        "tcp_github": tcp_open("github.com", 443, 3.0),
         "env_proxy": os.environ.get("HTTPS_PROXY") or os.environ.get("https_proxy")
         or os.environ.get("HTTP_PROXY") or os.environ.get("http_proxy"),
         "listening_ports": [],
@@ -228,11 +249,16 @@ def build_advice(result: dict) -> list[str]:
 
     net = result.get("network") or {}
     if net.get("direct_github") is False:
+        if net.get("tcp_github"):
+            advice.append("github.com:443 端口能连但 HTTPS 握手失败（典型的 SNI 阻断）：必须走代理。")
         if net.get("proxy_ok"):
             advice.append(
-                f"github.com 直连不通，但检测到可用代理 {net['proxy']}："
+                f"检测到可用代理 {net['proxy']}："
                 f"推送时传 --proxy {net['proxy']}。"
             )
+        elif net.get("listening_ports"):
+            ports = ", ".join(str(p) for p in net["listening_ports"])
+            advice.append(f"本机有端口在监听（{ports}）但没验证出可用代理：确认代理软件已启动并允许局域网/本地连接。")
         else:
             advice.append("github.com 直连不通且没探测到可用代理：先开代理，再传 --proxy <url>。")
     return advice

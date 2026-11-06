@@ -245,22 +245,46 @@ def main() -> int:
         log(f"[5/6] 使用已有远端 {args.remote_name}: {remotes[args.remote_name]}")
 
     # ---------- 6. 推送 ----------
-    proxy_args: list[str] = []
-    if args.proxy and args.proxy.lower() == "auto":
-        net = dg.detect_network()
-        if net.get("proxy_ok") and not net.get("direct_github"):
-            proxy_args = ["-c", f"http.proxy={net['proxy']}", "-c", f"https.proxy={net['proxy']}"]
-            log(f"[6/6] 直连不通，使用代理 {net['proxy']}")
-    elif args.proxy and args.proxy.lower() != "off":
-        proxy_args = ["-c", f"http.proxy={args.proxy}", "-c", f"https.proxy={args.proxy}"]
-        log(f"[6/6] 使用指定代理 {args.proxy}")
+    net = dg.detect_network() if args.proxy.lower() == "auto" else {}
 
-    push_cmd = [git, *proxy_args, "push", "-u", args.remote_name, args.branch]
+    def candidates() -> list[str]:
+        """按优先级返回要尝试的代理地址；空字符串代表直连。"""
+        mode = args.proxy.lower()
+        if mode == "off":
+            return [""]
+        if mode != "auto":
+            return [args.proxy]
+        if net.get("direct_github"):
+            return [""]                                    # 直连已验证可用
+        if net.get("proxy_ok") and net.get("proxy"):
+            return [net["proxy"]]                          # 直连不通，已知可用代理
+        # 没验证出代理：把本机在监听的端口都试一遍，再退回直连
+        ports = [f"http://127.0.0.1:{p}" for p in net.get("listening_ports", [])]
+        return ports or [""]
+
+    push_tail = ["push", "-u", args.remote_name, args.branch]
+    plan = candidates()
     if args.dry_run:
-        log(f"[6/6] 将执行: {' '.join(push_cmd)}")
+        cmd = [git, *(["-c", f"http.proxy={plan[0]}"] if plan[0] else []), *push_tail]
+        log(f"[6/6] 将执行: {' '.join(cmd)}")
         return 0
 
-    code, out, err = run(push_cmd, root, args.timeout * 2)
+    code, out, err = 1, "", "未尝试任何推送路径"
+    for idx, cand in enumerate(plan):
+        proxy_args = ["-c", f"http.proxy={cand}", "-c", f"https.proxy={cand}"] if cand else []
+        if cand:
+            if dg.http_via_proxy(cand) is None:
+                log(f"[6/6] 代理 {cand} 不可用，跳过")
+                continue
+            log(f"[6/6] 使用代理 {cand}")
+        code, out, err = run([git, *proxy_args, *push_tail], root, args.timeout * 2)
+        if code == 0:
+            break
+        kind = classify(err or out)
+        if kind != "network" or idx == len(plan) - 1:
+            break
+        log(f"[6/6] 这条路不通（{kind}），换下一条重试")
+
     if code == 124:
         log("[error] 推送超时。多为认证环节卡住：请在交互终端里手动执行一次 git push 完成登录。")
         return 4
@@ -273,8 +297,13 @@ def main() -> int:
             log("        3) 生成 Personal Access Token，用 https://<token>@github.com/... 推送（不要提交到仓库）")
             return 4
         if kind == "network":
-            log(f"[error] 网络不通: {(err or out).splitlines()[0] if (err or out) else 'unknown'}")
-            log("        先确认代理已开启，再传 --proxy http://127.0.0.1:<port> 重试。")
+            first = (err or out).splitlines()[0] if (err or out) else "unknown"
+            log(f"[error] 网络不通: {first}")
+            if net.get("tcp_github") and not net.get("direct_github"):
+                log("        端口 443 能连但 HTTPS 握手失败（SNI 阻断），必须走代理。")
+            ports = ", ".join(str(p) for p in net.get("listening_ports", [])) or "无"
+            log(f"        本机监听的候选端口: {ports}")
+            log("        确认代理已开启后指定：--proxy http://127.0.0.1:<port>")
             return 5
         if kind == "reject":
             log("[error] 远端有新提交，推送被拒。先同步再推：")
